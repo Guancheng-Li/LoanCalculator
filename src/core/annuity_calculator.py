@@ -5,7 +5,6 @@ Authors: guanchenglichina@qq.com (Guancheng Li)
 Class for calculating annuity.
 """
 
-import datetime
 import math
 
 from numpy_financial import ipmt, nper, pmt, ppmt
@@ -60,7 +59,7 @@ class AnnuityCalculator(BaseCalculator):
                 self.fixed_monthly_payment,
                 monthly_principal_amount,
                 monthly_interest_amount,
-                left_loan_amount,
+                unpaid_loan_amount,
             )
             monthly_meta_info[paying_date] = meta
         return monthly_meta_info

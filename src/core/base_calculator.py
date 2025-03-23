@@ -50,8 +50,22 @@ class BaseCalculator:
         self.monthly_meta_info.update(monthly_meta_info)
         self._calculate_total_interest_and_total_payment()
 
-    def print_info(self, print_montly_info=False):
-        if print_montly_info:
+    def get_info(self, add_monthly_info=False):
+        lines = []
+        lines.append(f"贷款总额: {self.loan_amount:.2f}")
+        lines.append(f"贷款期限（月）: {self.loan_term_by_month}")
+        lines.append(f"执行年利率: {100 * self.annual_interest_rate:.2f}%")
+        lines.append(f"总还款额: {self.total_payment:.2f}")
+        lines.append(f"总利息: {self.total_interest:.2f}")
+        if add_monthly_info:
+            lines.append("-" * 20)
+            key_list = sorted(list(self.monthly_meta_info.keys()))
+            for key in key_list:
+                lines.append(",".join(self.monthly_meta_info[key].get_info()))
+        return lines
+
+    def print_info(self, add_monthly_info=False):
+        if add_monthly_info:
             key_list = sorted(list(self.monthly_meta_info.keys()))
             for key in key_list:
                 self.monthly_meta_info[key].print_info()

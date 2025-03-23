@@ -23,12 +23,14 @@ class MetaInfo:
         self.monthly_interest_amount = monthly_interest_amount
         self.left_loan_amount = left_loan_amount
 
-    def print_info(self):
-        info = [
+    def get_info(self):
+        return [
             f"第{self.index}个月还款额: {self.monthly_payment:.2f}",
             f"还款日期: {self.date_str}",
             f"本金: {self.monthly_principal_amount:.2f}",
             f"利息: {self.monthly_interest_amount:.2f}",
             f"剩余本金: {self.left_loan_amount:.2f}",
         ]
-        print(", ".join(info))
+
+    def print_info(self):
+        print(", ".join(self.get_info()))
