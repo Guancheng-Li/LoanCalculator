@@ -7,7 +7,6 @@ Class for calculating linear.
 
 from common.date_time_utils import get_date_next_n_month
 from common.meta_info import MetaInfo
-
 from core.base_calculator import BaseCalculator
 
 
