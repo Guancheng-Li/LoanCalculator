@@ -32,6 +32,14 @@ class BaseCalculator:
     ):
         raise NotImplementedError
 
+    def _calculate_total_interest_and_total_payment(self):
+        self.total_interest = 1.0 * sum(
+            [v.monthly_interest_amount for v in self.monthly_meta_info.values()]
+        )
+        self.total_payment = 1.0 * sum(
+            [v.monthly_payment for v in self.monthly_meta_info.values()]
+        )
+
     def calculate(self):
         monthly_meta_info = self._calculate_impl(
             self.loan_term_by_month,
@@ -40,12 +48,7 @@ class BaseCalculator:
             self.start_date,
         )
         self.monthly_meta_info.update(monthly_meta_info)
-        self.total_interest = 1.0 * sum(
-            [v.monthly_interest_amount for v in monthly_meta_info.values()]
-        )
-        self.total_payment = 1.0 * sum(
-            [v.monthly_payment for v in monthly_meta_info.values()]
-        )
+        self._calculate_total_interest_and_total_payment()
 
     def print_info(self, print_montly_info=False):
         if print_montly_info:
@@ -94,35 +97,39 @@ class BaseCalculator:
         past_months, left_months = self._get_early_payment_date(early_payment_date_str)
         if not left_months:
             return
-        restart_date_str = left_months[0]
-        restart_date = datetime.strptime(restart_date_str, "%Y%m%d")
-        restart_meta = self.monthly_meta_info.get(restart_date_str)
-        if not restart_meta:
-            return
+        left_principal_amount = self.loan_amount
+        if past_months:
+            left_principal_amount = self.monthly_meta_info[
+                past_months[-1]
+            ].left_loan_amount
         # all loan is paid.
-        if restart_meta.left_loan_amount <= early_payment_amount:
+        if left_principal_amount <= early_payment_amount:
             for item in left_months:
                 del self.monthly_meta_info[item]
             self.monthly_meta_info[early_payment_date_str] = MetaInfo(
                 -1,
                 early_payment_date_str,
-                restart_meta.left_loan_amount,
+                left_principal_amount,
                 0,
                 0,
                 0,
             )
             return
         # part of loan is paid.
+        if not left_months:
+            return
+        restart_date_str = left_months[0]
+        restart_date = datetime.strptime(restart_date_str, "%Y%m%d")
         monthly_meta_info = self._calculate_impl(
-            self.loan_term_by_month - len(past_months),
-            restart_meta.left_loan_amount - early_payment_amount,
+            len(left_months),
+            left_principal_amount - early_payment_amount,
             self.monthly_interest_rate,
             restart_date,
         )
         self.monthly_meta_info.update(monthly_meta_info)
-        self.total_interest = 1.0 * sum(
-            [v.monthly_interest_amount for v in monthly_meta_info.values()]
-        )
-        self.total_payment = 1.0 * sum(
-            [v.monthly_payment for v in monthly_meta_info.values()]
-        )
+        self._calculate_total_interest_and_total_payment()
+
+    def early_payment_with_term_change(
+        self, early_payment_date_str, early_payment_amount
+    ):
+        raise NotImplementedError
