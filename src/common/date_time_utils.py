@@ -5,13 +5,18 @@ Authors: guanchenglichina@qq.com (Guancheng Li)
 Date time utilities.
 """
 
+import calendar
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 
 def get_date_next_n_month(start_date, n):
-    return start_date + relativedelta(months=n)
-
+    year = start_date.year
+    month = start_date.month + n
+    while month > 12:
+        month -= 12
+        year += 1
+    day = min(start_date.day, calendar.monthrange(year, month)[1])
+    return datetime(year, month, day)
 
 def get_date_str_next_n_month(start_date_str, n):
     return get_date_next_n_month(
