@@ -28,6 +28,29 @@ def test_annuity():
     annuity_calc.print_info()
 
 
+def test_annuity2():
+    annual_interest_rate = 0.036
+    loan_amount = 150 * 10000
+    loan_term_by_month = 360
+    start_date_str = "20250420"
+
+    annuity_calc = AnnuityCalculator(
+        annual_interest_rate,
+        loan_amount,
+        loan_term_by_month,
+        start_date_str,
+    )
+    annuity_calc.calculate()
+    annuity_calc.print_info()
+    annuity_calc.save_to_csv_file("/tmp/annuity_info.csv", with_header=True)
+    annuity_calc.early_payment_with_term_change("20250322", 200000)
+    annuity_calc.early_payment_with_term_change("20250722", 200000)
+    annuity_calc.early_payment_with_term_change("20251122", 200000)
+    annuity_calc.early_payment_with_term_change("20260322", 200000)
+    annuity_calc.early_payment_with_term_change("20260722", 200000)
+    annuity_calc.print_info()
+
+
 def test_linear():
     annual_interest_rate = 0.036
     loan_amount = 250 * 10000
@@ -73,9 +96,10 @@ def test_linear2():
 
 
 def main():
-    test_annuity()
-    test_linear()
-    test_linear2()
+    # test_annuity()
+    test_annuity2()
+    # test_linear()
+    # test_linear2()
 
 
 if __name__ == "__main__":

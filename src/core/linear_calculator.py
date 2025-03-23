@@ -6,6 +6,7 @@ Class for calculating linear.
 """
 
 from datetime import datetime
+import math
 
 from common.date_time_utils import get_date_next_n_month
 from common.meta_info import MetaInfo
@@ -80,14 +81,9 @@ class LinearCalculator(BaseCalculator):
             return
         # part of loan is paid.
         left_principal_amount_after_paid = left_principal_amount - early_payment_amount
-        left_loan_term_by_month = int(
-            left_principal_amount_after_paid // self.fixed_monthly_principal_amount
+        left_loan_term_by_month = math.ceil(
+            left_principal_amount_after_paid / self.fixed_monthly_principal_amount
         )
-        if (
-            left_loan_term_by_month * self.fixed_monthly_principal_amount
-            < left_principal_amount_after_paid
-        ):
-            left_loan_term_by_month += 1
         if not left_months:
             return
         restart_date_str = left_months[0]
